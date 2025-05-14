@@ -1,0 +1,101 @@
+Steps:
+
+1.
+Go to: Window → Perspective → Open Perspective → Other
+
+Select: Java EE → OK
+2. Create a new dynamic web Project 
+
+Go to: File → New → Dynamic Web Project
+
+Project Name: SessionTrackingApp
+
+Click Finish
+
+3. Create a JSP file
+Where: Inside WebContent or src/main/webapp
+File Name: SessionsPage.jsp
+
+Code:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Session Page</title>
+</head>
+<body>
+    <form method="get" action="SessionDemo">
+        <pre>
+<input type="submit" value="Click Here to Call Session Servlet!!!">
+        </pre>
+    </form>
+</body>
+</html>
+
+4. Create a Servlet
+
+Where: src/main/java → Right-click → New → Servlet
+Name: SessionDemo
+
+Code:
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@WebServlet("/SessionDemo")
+public class SessionDemo extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    public SessionDemo() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Get or create a session
+        HttpSession session = request.getSession();
+
+        // Set response type
+        response.setContentType("text/html");
+
+        // Get visit count from session, or initialize
+        Integer visitCount = (Integer) session.getAttribute("visitCount");
+        if (visitCount == null) {
+            visitCount = 1;
+        } else {
+            visitCount++;
+        }
+        session.setAttribute("visitCount", visitCount);
+
+        // Get session ID
+        String sessionId = session.getId();
+
+        // Output to browser
+        PrintWriter out = response.getWriter();
+        out.println("<html><head><title>Session Tracking Example</title></head><body>");
+        out.println("<h1>Session Tracking Example</h1>");
+        out.println("<p>Session ID: " + sessionId + "</p>");
+        out.println("<p>Number of Visits: " + visitCount + "</p>");
+        out.println("</body></html>");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response); // handle POST same as GET
+    }
+}
+
+5. Run :
+Right-click on SessionsPage.jsp → Run As → Run on Server
+
+Choose Tomcat → Finish
+
