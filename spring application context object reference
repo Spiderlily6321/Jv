@@ -1,0 +1,147 @@
+Steps:
+
+1. Create Maven Project
+Steps:
+Open Eclipse → File → New → Maven Project
+
+In the dialog box, click Next (don't check anything).
+
+Choose maven-archetype-quickstart version 1.1 → click Next.
+
+Enter:
+
+Group Id: com.springtest
+
+Artifact Id: test
+
+Click Finish
+
+2. Add Spring Dependencies
+
+File to edit: pom.xml
+
+Add these dependencies inside the <dependencies> tag:
+
+xml code:
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-core</artifactId>
+    <version>4.1.9.RELEASE</version>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>4.1.9.RELEASE</version>
+</dependency>
+
+
+3. Create Product.java
+
+File location: src/main/java/com/springtest/Test/Product.java
+
+Code in Product.java: (already given)
+
+package com.springtest.Test;
+
+public class Product {
+    private String model;
+    private double price;
+    private String brand;
+
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
+
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+
+    public String getBrand() { return brand; }
+    public void setBrand(String brand) { this.brand = brand; }
+
+    public Product() {
+        super();
+    }
+
+    @Override
+    public String toString() {
+        return "Product [model=" + model + ", price=" + price + ", brand=" + brand + "]";
+    }
+
+    public Product(String model, double price, String brand) {
+        super();
+        this.model = model;
+        this.price = price;
+        this.brand = brand;
+    }
+}
+
+
+4. Create config.xml
+File location: src/main/java/com/springtest/Test/config.xml
+
+Code:
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean class="com.springtest.Test.Product" name="prod1">
+        <property name="model">
+            <value>2233</value>
+        </property>
+        <property name="price">
+            <value>10000</value>
+        </property>
+        <property name="brand">
+            <value>Nokia</value>
+        </property>
+    </bean>
+
+</beans>
+
+5. Update App.java
+File location: src/main/java/com/springtest/Test/App.java
+
+code:
+
+package com.springtest.Test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class App {
+    public static void main(String[] args) {
+        System.out.println("Spring Application!!!");
+
+        ApplicationContext context = new ClassPathXmlApplicationContext(
+            new String[] {"com/springtest/Test/config.xml"}
+        );
+
+        Product p = (Product) context.getBean("prod1");
+        System.out.println(p);
+    }
+}
+
+
+6. Run the Project
+Right-click on App.java → Run As → Java Application
+
+OUtput:
+Spring Application!!!
+Product [model=2233, price=10000.0, brand=Nokia]
+
+
+___________________________________________________________________________
+
+| File           | Already There      | You Have to Write        |
+| -------------- | ------------------ | ------------------------ |
+| `pom.xml`      | Default Maven file | Add Spring dependencies  |
+| `Product.java` | Not present        | You write full class     |
+| `App.java`     | Default template   | Replace with Spring code |
+| `config.xml`   | Not present        | You create it manually   |
+
