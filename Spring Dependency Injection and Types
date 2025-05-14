@@ -1,0 +1,134 @@
+Steps:
+
+1.Create Maven Project
+
+In Eclipse: File → New → Maven Project
+
+Leave default settings → Next
+
+Choose:
+
+Group Id: com.springcore
+
+Artifact Id: springcore
+
+Click Finish
+
+2. Add Spring Dependencies
+File: pom.xml
+
+xml code:
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>4.1.9.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>4.1.9.RELEASE</version>
+    </dependency>
+</dependencies>
+
+
+3. Create Package
+In src/main/java, create package:
+com.springcore.ci
+
+4.Create Student.java inside com.springcore.ci
+
+code:
+
+package com.springcore.ci;
+
+public class Student {
+    private int sid;
+    private String sname;
+    private String sadd;
+
+    public Student() {
+        super();
+    }
+
+    public int getSid() {
+        return sid;
+    }
+
+    public void setSid(int sid) {
+        this.sid = sid;
+    }
+
+    public String getSname() {
+        return sname;
+    }
+
+    public void setSname(String sname) {
+        this.sname = sname;
+    }
+
+    public String getSadd() {
+        return sadd;
+    }
+
+    public void setSadd(String sadd) {
+        this.sadd = sadd;
+    }
+
+    @Override
+    public String toString() {
+        return "The Student Bean is [sid=" + sid + ", sname=\n" + sname + "\n, sadd=\n" + sadd + "\n]";
+    }
+}
+
+
+5.  Create XML config file myconfig.xml in com.springcore.ci
+
+code:
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="stud1" class="com.springcore.ci.Student">
+        <property name="sid" value="22343"/>
+        <property name="sname" value="Christopher Robin"/>
+        <property name="sadd" value="Jersey, New York"/>
+    </bean>
+
+</beans>
+
+
+6. Create Test.java in com.springcore.ci
+
+Code:
+package com.springcore.ci;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Test {
+
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext(
+                new String[] {"com/springcore/ci/myconfig.xml"});
+
+        Student student = (Student) context.getBean("stud1");
+        System.out.println(student);
+    }
+}
+
+
+7. Run the Test.java file and it will call the bean from the xml file.
+
+Output:
+
+The Student Bean is [sid=22343, sname=
+Christopher Robin
+, sadd=
+Jersey, New York
+]
+
+
