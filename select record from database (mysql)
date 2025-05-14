@@ -1,0 +1,132 @@
+Steps:
+1.
+Window → Perspective → Open Perspective → Other
+
+Choose Java EE → OK
+
+2. Create a Dynamic Web Project :
+
+File → New → Dynamic Web Project
+
+Project Name: TestDB → Click Finish
+
+3. Download MySQL Connector
+Download from:
+🔗 https://dev.mysql.com/downloads/connector/j/
+
+Choose platform: Platform Independent ZIP Archive
+
+Extract the .jar file (like mysql-connector-j-8.x.x.jar)
+
+4. Add JAR to Project
+
+Right-click on TestDB → Build Path → Configure Build Path
+
+Select Classpath → Add External JARs
+
+Choose the .jar file → Apply and Close
+
+5. Create MySQL Database
+
+Sql :
+CREATE DATABASE AMITYDB;
+USE AMITYDB;
+
+CREATE TABLE Department (
+  id INT,
+  name VARCHAR(50)
+);
+
+INSERT INTO Department VALUES
+(1, 'IT'),
+(2, 'HR'),
+(3, 'Sales'),
+(4, 'Finance'),
+(5, 'Admin');
+
+
+6. Create a JSP file:
+
+Where: Inside WebContent or src/main/webapp
+
+File Name: DataFetch.jsp
+
+Code:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Data Fetch</title>
+</head>
+<body>
+    <form method="get" action="DBFetch">
+        <h2>Fetching Data from MYSQL Tables!!</h2>
+        <input type="submit" value="Click here to Fetch Records from Department Table!">
+    </form>
+</body>
+</html>
+
+7. Create a Servlet:
+Where: src/main/java → Right-click → New → Servlet
+Name: DBFetch
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.*;
+import java.io.*;
+import java.sql.*;
+
+public class DBFetch extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    public DBFetch() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            // Load MySQL JDBC Driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Connect to MySQL database
+            Connection con = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/amitydb", "root", "root");
+
+            PreparedStatement statement = con.prepareStatement("SELECT * FROM Department");
+            ResultSet result = statement.executeQuery();
+
+            // Display results
+            PrintWriter pw = response.getWriter();
+            pw.println("<html><body>");
+            pw.println("<h2>Department Records:</h2>");
+
+            while (result.next()) {
+                pw.println("<font size='6' color=blue>" +
+                           result.getInt("id") + " - " +
+                           result.getString("name") + "</font><br>");
+            }
+
+            pw.println("</body></html>");
+            con.close();
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
+}
+
+
+8. Run:
+Right-click DataFetch.jsp → Run As → Run on Server
+
+Choose Tomcat → Finish
+
+
+
