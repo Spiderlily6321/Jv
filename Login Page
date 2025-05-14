@@ -1,0 +1,135 @@
+Steps:
+
+1. 
+Set Java EE Perspective in Eclipse
+Window → Perspective → Open Perspective → Java EE → OK
+
+2. Create Dynamic Web Project
+File → New → Dynamic Web Project → Name: LoginApp → Finish
+
+3. Add MySQL Connector
+Download: https://dev.mysql.com/downloads/connector/j/
+
+Extract .jar file
+
+Right-click project → Build Path → Configure Build Path → Libraries → Add External JARs → Add the .jar → Apply & Close
+
+4.  Setup MySQL Table
+
+code:
+
+CREATE DATABASE amitydb;
+USE amitydb;
+
+CREATE TABLE studlogin (
+    SUName VARCHAR(50),
+    SUPass VARCHAR(50)
+);
+
+INSERT INTO studlogin VALUES 
+('Peter', 'peter@123'),
+('Nikhil', 'nikhil@123');
+
+
+5 .Create Login.jsp Page
+
+ Location: WebContent
+File Name: Login.jsp
+
+code:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Login Form</title>
+    <style>
+        input { margin:10px; }
+        body { background-color:#2c74c7; text-align:center; }
+    </style>
+</head>
+<body>
+    <div><h2>Please Login to Your Account!</h2></div>
+    <form action="LoginServlet" method="get">
+        <label>Enter Your Username :</label>
+        <input type="text" name="uname"><br>
+        <label>Enter Your Password:</label>
+        <input type="password" name="pass"><br>
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>
+
+
+6. Create LoginServlet.java
+
+ Location: src/main/java → New → Servlet
+Name: LoginServlet
+
+Code:
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.*;
+import java.io.*;
+import java.sql.*;
+
+public class LoginServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    public LoginServlet() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        String uname = request.getParameter("uname");
+        String password = request.getParameter("pass");
+
+        String url = "jdbc:mysql://localhost:3306/amitydb";
+        String dbUser = "root"; // Or "ashwin" if that's your DB user
+        String dbPass = "root";
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(url, dbUser, dbPass);
+
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM studlogin WHERE SUName=? AND SUPass=?");
+            ps.setString(1, uname);
+            ps.setString(2, password);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                HttpSession session = request.getSession();
+                session.setAttribute("uname", uname);
+
+                out.println("<h2>Login Successful! Welcome " + uname + "</h2>");
+            } else {
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('Invalid Username or Password');");
+                out.println("location='Login.jsp';");
+                out.println("</script>");
+            }
+
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
+}
+
+7. Run :
+
+Right-click Login.jsp → Run As → Run on Server
+
+Choose Tomcat → Finish
+
