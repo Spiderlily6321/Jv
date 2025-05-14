@@ -1,0 +1,80 @@
+Steps:
+
+1.Open Eclipse IDE.
+
+Go to:
+Window → Perspective → Open Perspective → Other → Select Java EE → OK
+
+Create Project:
+File → New → Dynamic Web Project → Name: TestProject → Finish
+
+2. Where: webapp folder
+(inside: TestProject > WebContent or src/main/webapp depending on project structure)
+
+File Name: Student.jsp
+
+3.code:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Student Form</title>
+</head>
+<body>
+    <form method="get" action="TestServlet">
+        <pre>
+Enter Your Name: <input type="text" name="tname"><br>
+Enter Your Address: <input type="text" name="tadd"><br>
+<input type="submit"> <input type="reset">
+        </pre>
+    </form>
+</body>
+</html>
+
+4. Go to:  src/main/java
+File Name: TestServlet.java
+
+Code: (TestServlet.java)
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@WebServlet("/TestServlet")
+public class TestServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    public TestServlet() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String sname = request.getParameter("tname");
+        String sadd = request.getParameter("tadd");
+
+        response.setContentType("text/html");
+        PrintWriter pw = response.getWriter();
+        pw.println("<h1>Hello, Mr/Ms: " + sname + "</h1>");
+        pw.println("<h2>Your Address: " + sadd + "</h2>");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response); // Call doGet for POST method too
+    }
+}
+
+5. Run the project :
+
+Right-click Student.jsp → Run As → Run on Server
+
+Choose Tomcat server → Finish
+
+
