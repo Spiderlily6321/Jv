@@ -1,0 +1,77 @@
+Steps:
+1. Go to Window → Perspective → Open Perspective → Other
+Select Java EE → Click OK
+
+2.File → New → Dynamic Web Project
+Name it: FirstApp → Click Finish
+
+3.Create HTML file:
+Where: In WebContent folder
+File name: RefreshPage.html
+
+code for RefreshPage.html:
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Auto Refresh Page</title>
+</head>
+<body>
+    <form method="get" action="AutoRefreshServlet">
+        <pre>
+<input type="submit" value="Click to Call Refresh Servlet Page!!">
+        </pre>
+    </form>
+</body>
+</html>
+
+
+4. Create a Servlet:
+
+src → Right-click → New → Servlet
+Servlet Name: AutoRefreshServlet
+
+Code:
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
+
+@WebServlet("/AutoRefreshServlet")
+public class AutoRefreshServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    public AutoRefreshServlet() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Set page to auto-refresh every 5 seconds
+        response.setIntHeader("Refresh", 5);
+
+        // Set content type
+        response.setContentType("text/html");
+
+        // Output current time
+        PrintWriter out = response.getWriter();
+        out.println("<html><head><title>Auto Refresh Servlet Example</title></head><body>");
+        out.println("<h1>Auto Refresh Servlet Example</h1>");
+        out.println("<p>This page will automatically refresh every 5 seconds.</p>");
+        out.println("<p>Current time: " + new Date() + "</p>");
+        out.println("</body></html>");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response); // Reuse GET logic
+    }
+}
+
+5. Run :
+
+Right-click on RefreshPage.html → Run As → Run on Server
+
+Select Tomcat server → Finish
