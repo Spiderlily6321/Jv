@@ -1,0 +1,157 @@
+Steps:
+
+1. 
+Open Eclipse
+
+Window → Perspective → Open Perspective → Other → Java EE → OK
+
+2. CReate a dynamic project:
+File → New → Dynamic Web Project
+
+Name: TestDB → Finish
+
+3. Download and add mysql connector:
+
+Download from: https://dev.mysql.com/downloads/connector/j/
+
+Extract .jar file
+
+Right-click project → Build Path → Configure Build Path → Libraries → Add External JARs → Choose mysql-connector.jar → Apply and Close
+
+
+4. setup mysql:
+
+Sql code: 
+
+CREATE DATABASE AMITYDB;
+USE AMITYDB;
+
+CREATE TABLE voterregistration (
+  id INT,
+  name VARCHAR(100),
+  age INT,
+  contact VARCHAR(20),
+  email VARCHAR(100),
+  address VARCHAR(255)
+);
+
+5. create a JSP file:
+Where: WebContent
+File Name: VoterRegistration.jsp
+
+Code:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Voter Registration</title>
+</head>
+<body>
+    <form method="get" action="VoterRegisterServlet">
+        <h1>New Voter Registration</h1>
+        Enter Voter ID: <input type="text" name="vid"><br>
+        Enter Name: <input type="text" name="vname"><br>
+        Enter Age: <input type="text" name="vage"><br>
+        Enter Contact: <input type="text" name="vcontact"><br>
+        Enter Email: <input type="text" name="vemail"><br>
+        Enter Address: <input type="text" name="vadd"><br>
+        <input type="submit" value="Save Record">
+    </form>
+</body>
+</html>
+
+
+6.Create Servlet :
+Where: src/main/java → Right-click → New → Servlet
+Servlet Name: VoterRegisterServlet
+
+Code:
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.*;
+import java.io.*;
+import java.sql.*;
+
+public class VoterRegisterServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    public VoterRegisterServlet() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html");
+        PrintWriter pw = response.getWriter();
+
+        int vid = Integer.parseInt(request.getParameter("vid"));
+        String vname = request.getParameter("vname");
+        int vage = Integer.parseInt(request.getParameter("vage"));
+        String vcontact = request.getParameter("vcontact");
+        String vemail = request.getParameter("vemail");
+        String vadd = request.getParameter("vadd");
+
+        String url = "jdbc:mysql://localhost:3306/amitydb";
+        String username = "root";  // or "ashwin" based on your DB user
+        String password = "root";
+
+        Connection con = null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection(url, username, password);
+
+            PreparedStatement ps = con.prepareStatement("INSERT INTO voterregistration VALUES (?, ?, ?, ?, ?, ?)");
+            ps.setInt(1, vid);
+            ps.setString(2, vname);
+            ps.setInt(3, vage);
+            ps.setString(4, vcontact);
+            ps.setString(5, vemail);
+            ps.setString(6, vadd);
+
+            int i = ps.executeUpdate();
+
+            if (i != 0) {
+                pw.println("<font size='6' color='blue'>Record has been inserted successfully!</font>");
+            } else {
+                pw.println("<font size='6' color='red'>Failed to insert record.</font>");
+            }
+
+        } catch (Exception e) {
+            pw.println("<font color='red'>Error: " + e.getMessage() + "</font>");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (con != null) con.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
+}
+
+
+7. Run:
+
+Right-click VoterRegistration.jsp → Run As → Run on Server
+
+Choose Tomcat → Finish
+
+8 Output:
+
+You will see a form
+
+Enter voter details → Click Save Record
+
+Data gets inserted into MySQL voterregistration table
+
+Message: "Record has been inserted successfully!"
+
+
