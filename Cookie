@@ -1,0 +1,93 @@
+Steps:
+
+1. Create Dynamic Web Project
+File → New → Dynamic Web Project
+
+Project Name: CookieDemoApp → Finish
+
+2. Create 3 JSP Files in WebContent folder:
+
+A) Cookiedemo.jsp ( Takes input from the user )
+code:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Enter Name</title>
+</head>
+<body>
+    <form method="post" action="setcookie.jsp">
+        <b>
+            Enter Your Name : <input type="text" name="username"><br>
+            <input type="submit" value="Submit">
+        </b>
+    </form>
+</body>
+</html>
+
+
+B) setcookie.jsp (Stores the input value in a cookie)
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<%
+    String uname = request.getParameter("username");
+    Cookie ck = new Cookie("username", uname);
+    ck.setMaxAge(60); // cookie will last for 60 seconds
+    response.addCookie(ck);
+%>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Cookie Set</title>
+</head>
+<body>
+    <h3>Cookie Saved</h3>
+    <p><a href="showcookie.jsp">View The Cookie Value</a></p>
+</body>
+</html>
+
+
+C) showcookie.jsp (Reads and displays the cookie value)
+Code:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Displaying Cookies</title>
+</head>
+<body>
+    <h3>Reading the cookies</h3>
+    <%
+        Cookie[] array = request.getCookies();
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].getName().equals("username")) {
+                out.println("<br/>");
+                out.println("Name of the Cookie: " + array[i].getName() + "<br/>");
+                out.println("Value in Cookie: " + array[i].getValue());
+            }
+        }
+    %>
+</body>
+</html>
+
+
+3. Run :
+
+Run Cookiedemo.jsp → Enter your name → Submit
+
+It will open setcookie.jsp → Click link to showcookie.jsp
+    
+
+____________________________________________________________
+
+| File Name        | Purpose                         |
+| ---------------- | ------------------------------- |
+| `Cookiedemo.jsp` | Input user’s name               |
+| `setcookie.jsp`  | Store that name in a cookie     |
+| `showcookie.jsp` | Retrieve and display the cookie |
